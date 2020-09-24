@@ -6,6 +6,7 @@ import java.util.*;
 public class TuringMachine {
     protected int q = 0;
     protected Tape firstHead;
+    protected Tape lastHead;
     protected Tape head;
     protected String initTapeWord;
     protected Set<Integer> F = new HashSet<>();
@@ -40,6 +41,7 @@ public class TuringMachine {
                         setF(acceptStateInt);
                     } else if (line.substring(0, 1).equals("q")) {
                         String[] instructionData = line.split(",");
+
                         Instruction newInstruction = new Instruction(
                             Integer.parseInt(instructionData[0].substring(1)),
                             instructionData[1].charAt(0),
@@ -103,13 +105,31 @@ public class TuringMachine {
             this.q = currentInstruction.getNextState();
 
             if (currentInstruction.getDirection()) {
-                this.head = this.head.getNext();
-            } else {
-                if (this.head == this.firstHead) {
-                    this.firstHead = this.head.getPrevious();
+                Tape next = this.head.getNext();
+
+                if (this.head == this.lastHead && next.getData() != '_') {
+
+                    this.lastHead = next;
                 }
 
-                this.head = this.head.getPrevious();
+                if (this.head == this.firstHead && this.head.getData() == '_') {
+                    this.firstHead = next;
+                }
+
+                this.head = next;
+            } else {
+                Tape previous = this.head.getPrevious();
+
+                if (this.head == this.firstHead && previous.getData() != '_') {
+
+                    this.firstHead = previous;
+                }
+
+                if (this.head == this.lastHead && this.head.getData() == '_') {
+                    this.lastHead = previous;
+                }
+
+                this.head = previous;
             }
         }
 
@@ -126,8 +146,12 @@ public class TuringMachine {
         this.firstHead = head;
         Tape headAux = head;
 
-        for (char c : listChar) {
-            headAux.setData(c);
+        for (int i = 0; i < listChar.length; i++) {
+            if (i == listChar.length - 1) {
+                this.lastHead = headAux;
+            }
+
+            headAux.setData(listChar[i]);
             headAux = headAux.getNext();
         }
     }
@@ -135,7 +159,7 @@ public class TuringMachine {
     private void printTape() {
         Tape auxTape = this.firstHead;
 
-        while (auxTape.getData() != '_') {
+        while (auxTape.getPrevious() != this.lastHead) {
             System.out.print(auxTape.getData());
             auxTape = auxTape.getNext();
         }
@@ -147,17 +171,18 @@ public class TuringMachine {
 
         System.out.print("Estado inicial: " + instruction.getCurrentState() + " |==      ");
 
-        while (auxTape != this.head) {
+        while (auxTape != this.head && this.head != auxTape.getPrevious()) {
             System.out.print(auxTape.getData());
             auxTape = auxTape.getNext();
         }
 
         System.out.print(" [" + instruction.getReadChar() + " -> " + instruction.getWriteChar() + "] ");
 
-        auxTape = auxTape.getNext();
+        if (auxTape.getPrevious() != this.lastHead) {
+            auxTape = auxTape.getNext();
+        }
 
-
-        while (auxTape.getData() != '_') {
+        while (auxTape.getPrevious() != this.lastHead && this.firstHead != this.lastHead) {
             System.out.print(auxTape.getData());
             auxTape = auxTape.getNext();
         }

@@ -1,6 +1,6 @@
 @ex2
 #w é um binário e a MT faz um incremento dele. Exemplo 5+1=6, tal que em binário fica 101+1=110
-fita 11
+fita 101
 init q0
 accept q3
 

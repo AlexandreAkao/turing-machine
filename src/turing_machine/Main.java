@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br;
 
-        String path = "F:\\Projetos\\Faculdade\\TuringMachine\\src\\ex3.mt";
+        String path = "E:\\Projetos\\Faculdade\\turing-machine\\src\\ex4.mt";
 
         br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "ISO_8859_1"));
 

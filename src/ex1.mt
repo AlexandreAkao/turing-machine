@@ -1,6 +1,6 @@
 @ex1
 #binario tem que terminar com 01
-fita 100101101
+fita 01
 init q0
 accept q3
 
